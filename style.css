@@ -1,0 +1,63 @@
+/* here we style the body background */
+body {
+    background-image: linear-gradient(to right, skyblue , rgb(236, 120, 180));
+}
+/* this is style for the header of the webpage  */
+header{
+    height: 50vh;
+    margin-top : 3%;
+    /* opacity: 0.8; */
+    background-image: url("newback.jpeg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding-top: 1.2rem;
+    
+}
+/* border for the header */
+.border-gradient {
+    border: 10px solid;
+    border-image-slice: 1;
+    border-width: 5px;
+    border-radius: 4%;
+}
+/* border bolor for the header part  */
+.border-gradient-purple {
+    border-image-source: linear-gradient(to right, #833b9f, #33c0d6);
+}
+
+/* styling to the heading part  */
+.heading{
+    padding-left: 2%;
+    color: darkblue;
+}
+
+/* styling to Search button*/
+.searchbtn{
+    background-image: linear-gradient(to right, rgb(14, 8, 94) , rgb(34, 27, 130));
+    border-color: skyblue;
+    margin-left : 2%;
+}
+.form-group{
+    margin : 2%
+}
+/* styling for search result */
+.S_results{
+    padding-bottom :5%;
+}
+
+/* Home button styling */
+.footBG{
+    background-image: linear-gradient(to right, rgb(71, 84, 201)  , rgb(67, 240, 211));
+    border-color: rgb(39, 45, 142);
+    border-radius: 20px;
+    margin-left : 2%;
+}
+/* favorite button Styling */
+.favbtn{
+    background-image: linear-gradient(to right, rgb(208, 45, 173) , rgb(67, 240, 211));
+    border-color: rgb(39, 45, 142);
+    border-radius: 20px;
+    margin-left : 2%;
+}
+

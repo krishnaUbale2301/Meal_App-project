@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Favorite Meals</title>
+  <!-- You can use any CSS framework here -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="favStyle.css">
+</head>
+<body>
+  <!-- this is the main container which contain the all element -->
+  <div class="container">
+    <div class="heading">
+      <h1>Favorite Meals</h1>
+    </div>
+    <div class="para">
+      <p>Here are the meals you have added to your favorite list.</p>
+    </div>
+    <!-- Favorite meals -->
+    <div id="fav-meals" class="S_results row mt-4"></div>
+    <!-- Navigation -->
+    <nav class="navbar fixed-bottom navbar-light bg-red ">
+      <button class="btn-primary footBG"><a class="navbar-brand" href="index.html">Home</a></button>
+      <button class="btn-primary favbtn"><a class="navbar-brand" href="favorite.html">Favorite Meals</a></button>
+      <!-- <span class="favlist footBG"><a class="navbar-brand" href="favorite.html">Favorite Meals</a></span> -->
+    </nav>
+  </div>
+  <!-- Vanilla JavaScript only -->
+  <script>
+    // Get the elements from the document
+    const favMeals = document.getElementById("fav-meals");
+
+    // Define a function to fetch a meal by id from an API
+    function fetchMealById(id) {
+      // Use the fetch API to get the data
+      fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`)
+        .then(response => response.json()) // Convert the response to JSON
+        .then(data => displayMeal(data.meals[0])) // Display the meal
+        .catch(error => console.error(error)); // Handle any errors
+    }
+
+    // Define a function to display a meal in the document
+    function displayMeal(meal) {
+      // Create a card element for the meal
+      let card = document.createElement("div");
+      card.className = "card col-md-4";
+      card.innerHTML = `
+        <img src="${meal.strMealThumb}" class="card-img-top" alt="${meal.strMeal}">
+        <div class="card-body">
+          <h5 class="card-title">${meal.strMeal}</h5>
+          <p class="card-text">${meal.strCategory} - ${meal.strArea}</p>
+          <a href="#" class="btn btn-danger" data-id="${meal.idMeal}">Remove from Favorite</a>
+        </div>
+      `;
+      // Append the card to the favorite meals
+      favMeals.appendChild(card);
+    }
+
+    // Define a function to remove a meal from the local storage
+    function removeMealFromFav(id) {
+      // Get the existing favorite meals from the local storage or an empty array
+      let favMeals = JSON.parse(localStorage.getItem("favMeals")) || [];
+      // Check if the meal is in the favorite list
+      if (favMeals.includes(id)) {
+        // Remove the meal id from the favorite list
+        favMeals = favMeals.filter(mealId => mealId !== id);
+        // Save the updated list to the local storage
+        localStorage.setItem("favMeals", JSON.stringify(favMeals));
+        // Show a message if the meal is removed successfully
+        alert("This meal has been removed from your favorite list.");
+        // Reload the page to update the view
+        location.reload();
+      } else {
+        // Show a message if the meal is not in the favorite list
+        alert("This meal is not in your favorite list.");
+      }
+    }
+
+    // Get the favorite meals from the local storage or an empty array
+    let favMealsIds = JSON.parse(localStorage.getItem("favMeals")) || [];
+
+   
+    // Check if there are any favorite meals
+    if (favMealsIds.length > 0) {
+      // Loop through the favorite meals ids
+      for (let id of favMealsIds) {
+        // Fetch and display the meal by id
+        fetchMealById(id);
+      }
+    } else {
+      // Show a message if there are no favorite meals
+      let message = document.createElement("p");
+      message.className = "text-center";
+      message.textContent = "You have not added any meals to your favorite list yet.";
+      favMeals.appendChild(message);
+    }
+
+    // Add an event listener to the document
+    document.addEventListener("click", function(event) {
+      // Check if the target element is a button with data-id attribute
+      if (event.target.tagName === "A" && event.target.dataset.id) {
+        // Get the meal id from the data-id attribute
+        let id = event.target.dataset.id;
+        // Remove the meal from the favorite list
+        removeMealFromFav(id);
+      }
+    });
+  </script>
+</body>
+</html>
