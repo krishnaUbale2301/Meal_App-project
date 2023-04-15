@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Meal App</title>
+
+  <!-- CSS framework here -->
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <!-- style sheet of CSS added here -->
+  <link rel="stylesheet" type="text/css" href="style.css">
+</head>
+<body>
+  <!-- this is the main container which contain the all element -->
+  <div class="container">
+    <header class="border-gradient border-gradient-purple">
+      <div class="heading">
+        <h1>Meal App</h1>
+        <p>Search for your favorite meals and add them to your list.</p>
+        <h5>Welcome to Meal Finder </h5>
+      </div>
+    </header>
+    <!-- Search form -->
+    <form id="search-form">
+      <div class="form-group">
+        <label class="search_label" for="search-input">Search by name or ingredient:</label>
+        <input type="text" class="form-control" id="search-input" placeholder="Enter a meal name or Ingredient">
+      </div>
+      <!-- here is search button for search the results -->
+      <button type="submit" class=" searchbtn btn btn-primary ">Search</button>
+    </form>
+    <!-- Search results -->
+    <div id="search-results" class="S_results row mt-4 "></div>
+    <!-- Navigation -->
+    <nav class="navbar fixed-bottom navbar-light bg-red ">
+      <button class="btn-primary footBG" style="color :white"><a class="navbar-brand" href="#">Home</a></button>
+      <button class="btn-primary favbtn" style="color :white" ><a class="navbar-brand" href="favorite.html">Favorite Meals</a></button>
+      
+    </nav>
+  </div>
+  <!-- Vanilla JavaScript only -->
+  <script>
+    // Get the elements from the document
+    const searchForm = document.getElementById("search-form");
+    const searchInput = document.getElementById("search-input");
+    const searchResults = document.getElementById("search-results");
+
+    // Define a function to fetch meals from an API
+    function fetchMeals(query) {
+      // Use the fetch API to get the data
+      fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${query}`)
+        .then(response => response.json()) // Convert the response to JSON
+        .then(data => displayMeals(data.meals)) // Display the meals
+        .catch(error => console.error(error)); // Handle any errors
+    }
+
+    // Define a function to display meals in the document
+    function displayMeals(meals) {
+      // Clear any previous results
+      searchResults.innerHTML = "";
+      // Check if there are any meals
+      if (meals) {
+        // Loop through the meals array
+        for (let meal of meals) {
+          // Create a card element for each meal
+          let card = document.createElement("div");
+          card.className = "card col-md-4";
+          card.innerHTML = `
+            <img src="${meal.strMealThumb}" class="card-img-top" alt="${meal.strMeal}">
+            <div class="card-body">
+              <h5 class="card-title">${meal.strMeal}</h5>
+              <p class="card-text">${meal.strCategory} - ${meal.strArea}</p>
+              <a href="#" class="btn btn-primary" data-id="${meal.idMeal}">Add to Favorite</a>
+            </div>
+          `;
+          // Append the card to the search results
+          searchResults.appendChild(card);
+        }
+      } else {
+        // Show a message if no meals are found
+        let message = document.createElement("p");
+        message.className = "text-center";
+        message.textContent = "No meals found. Please try a different query.";
+        searchResults.appendChild(message);
+      }
+    }
+
+    // Define a function to add a meal to the local storage
+    function addMealToFav(id) {
+      // Get the existing favorite meals from the local storage or an empty array
+      let favMeals = JSON.parse(localStorage.getItem("favMeals")) || [];
+      // Check if the meal is already in the favorite list
+      if (favMeals.includes(id)) {
+        // Show a message if the meal is already added
+        alert("This meal is already in your favorite list.");
+      } else {
+        // Add the meal id to the favorite list
+        favMeals.push(id);
+        // Save the updated list to the local storage
+        localStorage.setItem("favMeals", JSON.stringify(favMeals));
+        // Show a message if the meal is added successfully
+        alert("This meal has been added to your favorite list.");
+      }
+    }
+
+    // Add an event listener to the search form
+    searchForm.addEventListener("submit", function(event) {
+      // Prevent the default behavior of the form
+      event.preventDefault();
+      // Get the value of the search input
+      let query = searchInput.value.trim();
+      
+
+      // Check if the query is not empty
+      if (query) {
+        // Fetch and display the meals matching the query
+        fetchMeals(query);
+      } else {
+        // Show a message if the query is empty
+        alert("Please enter a meal name or ingredient.");
+      }
+    });
+
+    // Add an event listener to the document
+    document.addEventListener("click", function(event) {
+      // Check if the target element is a button with data-id attribute
+      if (event.target.tagName === "A" && event.target.dataset.id) {
+        // Get the meal id from the data-id attribute
+        let id = event.target.dataset.id;
+        // Add the meal to the favorite list
+        addMealToFav(id);
+      }
+    });
+  </script>
+</body>
+</html>
